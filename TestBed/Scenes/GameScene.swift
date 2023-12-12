@@ -98,6 +98,14 @@ class GameScene: SKScene {
                     velocity = -25.0
                     numScore += 1
                     scoreLabel.text = "\(numScore)"
+                    //animazione jump
+                    var jumpPlayer: [SKTexture] = []
+                    for i in 0...2{
+                        jumpPlayer.append(SKTexture(imageNamed: "0\(i)_Jump"))
+                    }
+                    
+                    player.run(.repeat(.animate(with: jumpPlayer, timePerFrame: 0.4), count: 1))
+                    
                     run(soundJump)
                 }
             }
@@ -138,6 +146,7 @@ extension GameScene{
     func setupNodes(){
         createBG()
         createGround()
+        createCieling()
         createPlayer()
         spawnBlock()
         setupCamera()
@@ -151,8 +160,8 @@ extension GameScene{
     }
     
     func createBG(){
-        for i in 0...2{
-            let bg = SKSpriteNode(imageNamed: "background")
+        for i in 0...1{
+            let bg = SKSpriteNode(imageNamed: "Bg\(i)")
             bg.name = "BG"
             bg.anchorPoint = .zero
             bg.position = CGPoint(x: CGFloat(i) * bg.frame.width, y: 0.0)
@@ -160,9 +169,24 @@ extension GameScene{
             addChild(bg)
         }
     }
-    
+    func createCieling(){
+        for i in 0...1{
+            let cieling = SKSpriteNode(imageNamed: "cieling")
+            cieling.name = "cieling"
+            cieling.anchorPoint = .zero
+            cieling.zPosition = 1.0
+            cieling.position = CGPoint(x: CGFloat(i)*cieling.frame.width,
+                                       y: frame.height - cieling.frame.height * 2.0)
+            /*
+            cieling.physicsBody = SKPhysicsBody(rectangleOf: cieling.size)
+            cieling.physicsBody!.isDynamic = false
+            cieling.physicsBody!.affectedByGravity = false
+             */
+            addChild(cieling)
+        }
+    }
     func createGround(){
-        for i in 0...2{
+        for i in 0...1{
             ground = SKSpriteNode(imageNamed: "ground")
             ground.name = "Ground"
             ground.anchorPoint = .zero
@@ -178,7 +202,7 @@ extension GameScene{
         }
     }
     func createPlayer(){
-        player = SKSpriteNode(imageNamed: "runcycle0")
+        player = SKSpriteNode(imageNamed: "00_Run")
         player.name = "Player"
         player.zPosition = 5.0
         player.setScale(3.5)
@@ -187,14 +211,14 @@ extension GameScene{
         
         //Animation player
         var textures:[SKTexture] = []
-        for i in 0...7{
-            textures.append(SKTexture(imageNamed: "runcycle\(i)"))
+        for i in 0...8{
+            textures.append(SKTexture(imageNamed: "0\(i)_Run"))
         }
         player.run(.repeatForever(.animate(with: textures, timePerFrame: 0.08)))
         
         
         //player physics
-        player.physicsBody = SKPhysicsBody(circleOfRadius: player.size.width/2.0)
+        player.physicsBody = SKPhysicsBody(circleOfRadius: player.size.width/4.0)
         player.physicsBody!.affectedByGravity = false
         player.physicsBody!.restitution = 0.0
         
@@ -214,6 +238,7 @@ extension GameScene{
     func moveCamera(){
         let amountToMove = CGPoint(x: cameraMovePointsPerSeconds * CGFloat(dt),
                                    y: 0.0)
+        
         /* cameraNode.position = CGPoint(x: cameraNode.position.x + amountToMove.x,
          y: cameraNode.position.y + amountToMove.y)*/
         
@@ -237,14 +262,20 @@ extension GameScene{
                 node.position = CGPoint (x: node.position.x + node.frame.width*2.0, y: node.position.y)
             }
         }
+        //cieling
+        enumerateChildNodes(withName: "cieling"){(node,_) in
+            let node = node as! SKSpriteNode
+            
+            if node.position.x + node.frame.width < self.cameraRect.origin.x{
+                node.position = CGPoint (x: node.position.x + node.frame.width*2.0, y: node.position.y)
+            }
+        }
     }
     func movePlayer(){
         let amountToMove = cameraMovePointsPerSeconds * CGFloat(dt)
-        
         //let rotate = CGFloat(1).degreeToRadians() * amountToMove/2.5
         //rotation
         //player.zRotation -= rotate
-        
         player.position.x += amountToMove
     }
     
