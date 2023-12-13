@@ -4,7 +4,7 @@
 //
 //  Created by Fabio Falco on 10/12/23.
 //
-/*
+
 import SpriteKit
 import SwiftUI
 
@@ -32,21 +32,17 @@ class MainMenu: SKScene{
         if node.name == "play"{
             let scene = GameScene(size:size)
             scene.scaleMode = scaleMode
-            view!.presentScene(scene,transition: .doorsOpenVertical(withDuration: 0.5))
+            view!.presentScene(scene,transition: .doorsOpenVertical(withDuration: 0.8))
         }else if node.name == "highscore"{
             setupPanel()
         }else if node.name == "setting"{
-            //setupSetting()
+            setupSetting()
         }else if node.name == "container"{
             containerNode.removeFromParent()
         }else if node.name == "music"{
-            //let node = node as! SKSpriteNode
-            //SKTAudio.musicEnabled = !SKTAudio.musicEnabled
-            //node.texture = SKTexture(imageNamed: SKTAudio.musicEnabled ? "musicOn" : "musicOff")
+            
         }else if node.name == "effect"{
-            //let node = node as! SKSpriteNode
-            //effectEnabled = !effectEnabled
-            //node.texture = SKTexture(imageNamed: effectEnabled ? "effectOn" : "effectOff")
+        
         }
         
     }
@@ -124,29 +120,30 @@ extension MainMenu{
         panel.addChild(highscoreLabel)
     }
     
-   /* func setupSetting(){
-        setupContainer()
-        
-        let panel = SKSpriteNode(imageNamed: "panel")
-        panel.setScale(1.5)
-        panel.position = .zero
-        panel.zPosition = 20.0
-        containerNode.addChild(panel)
-        
-        let music = SKSpriteNode(imageNamed: SKTAudio.musicEnabled ? "musicOn" : "musicOff")
-        music.name = "music"
-        music.setScale(0.7)
-        music.zPosition = 25.0
-        music.position = CGPoint(x: -music.frame.width - 50.0, y: 0.0)
-        panel.addChild(music)
-        
-        let effect = SKSpriteNode(imageNamed: effectEnabled ? "effectOn" : "effectOff")
-        effect.name = "effect"
-        effect.setScale(0.7)
-        effect.zPosition = 25.0
-        effect.position = CGPoint(x: music.frame.width + 50.0, y: 0.0)
-        panel.addChild(effect)
-    }*/
+   func setupSetting(){
+       setupContainer()
+       
+       let panel = SKSpriteNode(imageNamed: "panel")
+       panel.setScale(1.5)
+       panel.position = .zero
+       panel.zPosition = 20.0
+       containerNode.addChild(panel)
+       
+       let resume = SKSpriteNode(imageNamed: "resume")
+       resume.name = "resume"
+       resume.zPosition = 70.0
+       resume.setScale(0.7)
+       resume.position = CGPoint(x: -panel.frame.width/2.0 + resume.frame.width * 2.5, y: 0.0)
+       panel.addChild(resume)
+       
+       let quit = SKSpriteNode(imageNamed: "back")
+       quit.name = "home"
+       quit.zPosition = 70.0
+       quit.setScale(0.7)
+       quit.position = CGPoint(x: panel.frame.width/2.0 - quit.frame.width * 2.5, y: 0.0)
+       panel.addChild(quit)
+  
+   }
     func setupContainer(){
         containerNode = SKSpriteNode()
         containerNode.name = "container"
@@ -156,4 +153,4 @@ extension MainMenu{
         containerNode.position = CGPoint(x: size.width/2.0, y: size.height/2.0)
         addChild(containerNode)
     }
-}*/
+}
