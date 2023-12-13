@@ -4,7 +4,7 @@
 //
 //  Created by Fabio Falco on 10/12/23.
 //
-
+/*
 import Foundation
 import SpriteKit
 import SwiftUI
@@ -60,7 +60,7 @@ extension GameOver{
             ground.physicsBody = SKPhysicsBody(rectangleOf: ground.size)
             ground.physicsBody!.isDynamic = false
             ground.physicsBody!.affectedByGravity = false
-            ground.physicsBody!.categoryBitMask = PhysicsCategory.Ground
+            //ground.physicsBody!.categoryBitMask = PhysicsCategory.Ground
             addChild(ground)
         }
     }
@@ -94,3 +94,4 @@ extension GameOver{
         addChild(containerNode)
     }
 }
+*/

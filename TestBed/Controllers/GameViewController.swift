@@ -13,7 +13,7 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let scene = MainMenu(size: CGSize(width: 2048, height: 1536))
+        let scene = GameScene(size: CGSize(width: 2048, height: 1536))
         scene.scaleMode = .aspectFill
         
         let skView = self.view as! SKView

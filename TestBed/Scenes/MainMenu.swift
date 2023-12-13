@@ -4,7 +4,7 @@
 //
 //  Created by Fabio Falco on 10/12/23.
 //
-
+/*
 import SpriteKit
 import SwiftUI
 
@@ -36,17 +36,17 @@ class MainMenu: SKScene{
         }else if node.name == "highscore"{
             setupPanel()
         }else if node.name == "setting"{
-            setupSetting()
+            //setupSetting()
         }else if node.name == "container"{
             containerNode.removeFromParent()
         }else if node.name == "music"{
-            let node = node as! SKSpriteNode
-            SKTAudio.musicEnabled = !SKTAudio.musicEnabled
-            node.texture = SKTexture(imageNamed: SKTAudio.musicEnabled ? "musicOn" : "musicOff")
+            //let node = node as! SKSpriteNode
+            //SKTAudio.musicEnabled = !SKTAudio.musicEnabled
+            //node.texture = SKTexture(imageNamed: SKTAudio.musicEnabled ? "musicOn" : "musicOff")
         }else if node.name == "effect"{
-            let node = node as! SKSpriteNode
-            effectEnabled = !effectEnabled
-            node.texture = SKTexture(imageNamed: effectEnabled ? "effectOn" : "effectOff")
+            //let node = node as! SKSpriteNode
+            //effectEnabled = !effectEnabled
+            //node.texture = SKTexture(imageNamed: effectEnabled ? "effectOn" : "effectOff")
         }
         
     }
@@ -77,7 +77,7 @@ extension MainMenu{
             ground.physicsBody = SKPhysicsBody(rectangleOf: ground.size)
             ground.physicsBody!.isDynamic = false
             ground.physicsBody!.affectedByGravity = false
-            ground.physicsBody!.categoryBitMask = PhysicsCategory.Ground
+           // ground.physicsBody!.categoryBitMask = PhysicsCategory.Ground
             addChild(ground)
         }
     }
@@ -124,7 +124,7 @@ extension MainMenu{
         panel.addChild(highscoreLabel)
     }
     
-    func setupSetting(){
+   /* func setupSetting(){
         setupContainer()
         
         let panel = SKSpriteNode(imageNamed: "panel")
@@ -146,7 +146,7 @@ extension MainMenu{
         effect.zPosition = 25.0
         effect.position = CGPoint(x: music.frame.width + 50.0, y: 0.0)
         panel.addChild(effect)
-    }
+    }*/
     func setupContainer(){
         containerNode = SKSpriteNode()
         containerNode.name = "container"
@@ -156,4 +156,4 @@ extension MainMenu{
         containerNode.position = CGPoint(x: size.width/2.0, y: size.height/2.0)
         addChild(containerNode)
     }
-}
+}*/
