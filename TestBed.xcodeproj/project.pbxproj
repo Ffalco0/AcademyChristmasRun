@@ -9,7 +9,8 @@
 /* Begin PBXBuildFile section */
 		743BF82A2B26111700C4F589 /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 743BF8292B26111700C4F589 /* MainMenu.swift */; };
 		743BF82C2B263B7100C4F589 /* GameOver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 743BF82B2B263B7100C4F589 /* GameOver.swift */; };
-		743BF8B42B29EB1300C4F589 /* backgroundMusic.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 743BF8B32B29EB1300C4F589 /* backgroundMusic.mp3 */; };
+		743BF8C62B2BC14100C4F589 /* MusicManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 743BF8C52B2BC14100C4F589 /* MusicManager.swift */; };
+		743BF8C82B2BC1A400C4F589 /* Its_Snowtime_MP3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 743BF8C72B2BC1A400C4F589 /* Its_Snowtime_MP3.mp3 */; };
 		74B420022B1F36AC00EF9172 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74B420012B1F36AC00EF9172 /* AppDelegate.swift */; };
 		74B420042B1F36AC00EF9172 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 74B420032B1F36AC00EF9172 /* GameScene.sks */; };
 		74B420062B1F36AC00EF9172 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 74B420052B1F36AC00EF9172 /* Actions.sks */; };
@@ -23,7 +24,8 @@
 /* Begin PBXFileReference section */
 		743BF8292B26111700C4F589 /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		743BF82B2B263B7100C4F589 /* GameOver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOver.swift; sourceTree = "<group>"; };
-		743BF8B32B29EB1300C4F589 /* backgroundMusic.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = backgroundMusic.mp3; sourceTree = "<group>"; };
+		743BF8C52B2BC14100C4F589 /* MusicManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicManager.swift; sourceTree = "<group>"; };
+		743BF8C72B2BC1A400C4F589 /* Its_Snowtime_MP3.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Its_Snowtime_MP3.mp3; sourceTree = "<group>"; };
 		74B41FFE2B1F36AC00EF9172 /* TestBed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestBed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		74B420012B1F36AC00EF9172 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		74B420032B1F36AC00EF9172 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -49,7 +51,7 @@
 		743BF8AD2B29EA4C00C4F589 /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
-				743BF8B32B29EB1300C4F589 /* backgroundMusic.mp3 */,
+				743BF8C72B2BC1A400C4F589 /* Its_Snowtime_MP3.mp3 */,
 			);
 			name = Sounds;
 			path = ../../TestShitty/TestShitty/Sounds;
@@ -105,6 +107,7 @@
 				74B420012B1F36AC00EF9172 /* AppDelegate.swift */,
 				74B420032B1F36AC00EF9172 /* GameScene.sks */,
 				74B420052B1F36AC00EF9172 /* Actions.sks */,
+				743BF8C52B2BC14100C4F589 /* MusicManager.swift */,
 				743BF8AD2B29EA4C00C4F589 /* Sounds */,
 				744C3CE52B21C86900AEC953 /* Scenes */,
 				744C3CE42B21C85200AEC953 /* Controllers */,
@@ -172,8 +175,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				74B4200D2B1F36AC00EF9172 /* Main.storyboard in Resources */,
+				743BF8C82B2BC1A400C4F589 /* Its_Snowtime_MP3.mp3 in Resources */,
 				74B420042B1F36AC00EF9172 /* GameScene.sks in Resources */,
-				743BF8B42B29EB1300C4F589 /* backgroundMusic.mp3 in Resources */,
 				74B4200F2B1F36AD00EF9172 /* Assets.xcassets in Resources */,
 				74B420122B1F36AD00EF9172 /* LaunchScreen.storyboard in Resources */,
 				74B420062B1F36AC00EF9172 /* Actions.sks in Resources */,
@@ -192,6 +195,7 @@
 				74B4200A2B1F36AC00EF9172 /* GameViewController.swift in Sources */,
 				74B420022B1F36AC00EF9172 /* AppDelegate.swift in Sources */,
 				743BF82C2B263B7100C4F589 /* GameOver.swift in Sources */,
+				743BF8C62B2BC14100C4F589 /* MusicManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,7 +1,8 @@
-//  GameViewController.swift
-//  TestBed
 //
-//  Created by Fabio Falco on 05/12/23.
+//  GameViewController.swift
+//  TestShitty
+//
+//  Created by Fabio Falco on 12/12/23.
 //
 
 import UIKit
@@ -17,9 +18,9 @@ class GameViewController: UIViewController {
         scene.scaleMode = .aspectFill
         
         let skView = self.view as! SKView
-        skView.showsFPS = true
-        skView.showsNodeCount = true
-        skView.showsPhysics = true
+        skView.showsFPS = false
+        skView.showsNodeCount = false
+        skView.showsPhysics = false
         skView.ignoresSiblingOrder = true
         skView.presentScene(scene)
     }
