@@ -17,6 +17,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         static let Paper:      UInt32 = 0
     }
     
+    static let shared = GameScene() //This allow me to accese this element from another scene
     
     //Elements
     var floor:SKSpriteNode!
@@ -28,6 +29,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //Stats
     var velocity:CGFloat = 7.0//Change this value to modify yhe movement speed
     var difficulty:TimeInterval = 6.0
+    var gameOver:Bool = false
     
     
     var startTouch = CGPoint()
@@ -49,6 +51,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     //Music
     var backgrounMusic:SKAudioNode?
+    var isMusicPlaying = true
     
     //Timer
     var timer: Timer?
@@ -63,11 +66,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         physicsWorld.contactDelegate = self
         // Start Timer and add points
         startTimer()
-        playBackgroundMusic()
         
+        if isMusicPlaying{
+            playBackgroundMusic()
+        }else{
+            pauseBackgroundMusic()
+        }
         
         setUpNodes()
         createGround()
+        
         setupPaper()
         
         startObstacleSpawnTimer()
@@ -77,8 +85,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     
     override func update(_ currentTime: TimeInterval) {
-        moveGrounds()
-        moveBg()
+        if !gameOver{
+            moveGrounds()
+            moveBg()
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -97,16 +107,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             scene.scaleMode = scaleMode
             view!.presentScene(scene,transition: .doorsCloseVertical(withDuration: 0.8))
         }else{
-            let jumpIntensity =  1500.0 //Change the coefficient for a higher jump
             if !gamePaused{
                 if onGround{
+                    onGround = true
+                    let jumpIntensity = 1500.0
                     playerJump(withIntensity: jumpIntensity)
                 }
             }
         }
-        
     }
-    
+  
     
     func didBegin(_ contact: SKPhysicsContact) {
         let bodyA = contact.bodyA
@@ -129,6 +139,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             addPoints()
             contact.bodyA.node?.removeFromParent()
         }
+        if (bodyA.categoryBitMask == PhysicsCategory.Player && bodyB.categoryBitMask == PhysicsCategory.Obstacle){
+            contact.bodyB.node?.removeFromParent()
+        }else if (bodyA.categoryBitMask == PhysicsCategory.Obstacle && bodyB.categoryBitMask == PhysicsCategory.Player) {
+            contact.bodyA.node?.removeFromParent()
+        }
     }
     
     //reset timer when scen has been dealloccated
@@ -145,8 +160,9 @@ extension GameScene{
         createPlayer()
         setupScore()
         createPauseMenu()
+        setUpDecoration()
     }
-    
+
     func createBg(){
         for i in 0...2{
             bg = SKSpriteNode(imageNamed: "Bg\(i)")
@@ -158,6 +174,14 @@ extension GameScene{
             self.addChild(bg)
         }
     }
+    func setUpDecoration(){
+        let decoration = SKSpriteNode(imageNamed: "tree")
+        decoration.name = "tree"
+        decoration.setScale(0.5)
+        decoration.position = CGPoint(x: self.frame.midX - 200.0, y: self.frame.midY + 100.0)
+        decoration.zPosition = 2.0
+        self.addChild(decoration)
+    }
     
     func createGround(){
         for i in 0...3{
@@ -168,7 +192,6 @@ extension GameScene{
             floor.zPosition = 4.0
             floor.position = CGPoint(x: CGFloat(i) * floor.size.width,
                                      y: floor.size.height / 1.5)
-            
             floor.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: floor.size.width,
                                                                   height:floor.size.height))
             floor.physicsBody?.affectedByGravity = false
@@ -203,6 +226,19 @@ extension GameScene{
                 if bgNode.position.x < -bgNode.size.width {
                     // Riporta lo sfondo alla posizione iniziale dell'altro sfondo
                     bgNode.position.x += bgNode.size.width * 2.0
+                }
+            }
+        }
+        
+        enumerateChildNodes(withName: "tree") { (node, _) in
+            if let bgNode = node as? SKSpriteNode {
+                // Sposta gli sfondi lateralmente
+                bgNode.position.x -= self.velocity
+                
+                // Verifica se uno degli sfondi è fuori dalla scena
+                if bgNode.position.x < -bgNode.size.width + bgNode.frame.size.width {
+                    // Riporta lo sfondo alla posizione iniziale dell'altro sfondo
+                    bgNode.position.x += bgNode.size.width * 4.0
                 }
             }
         }
@@ -258,13 +294,13 @@ extension GameScene{
         obstacle.position = CGPoint(x: size.width + obstacle.size.width * CGFloat.random(in: 2.5...3.5),
                                     y: size.height / 2)
         obstacle.zPosition = 5.0
+        obstacle.setScale(0.8)
         obstacle.physicsBody = SKPhysicsBody(rectangleOf: obstacle.size)
         obstacle.physicsBody?.affectedByGravity = true
         obstacle.physicsBody?.isDynamic = true
         obstacle.physicsBody?.allowsRotation = false
         obstacle.physicsBody?.categoryBitMask = PhysicsCategory.Obstacle
         obstacle.physicsBody?.contactTestBitMask = PhysicsCategory.Player
-        
         addChild(obstacle)
         
         let moveAction = SKAction.moveTo(x: -obstacle.size.width, duration: 3)
@@ -327,10 +363,16 @@ extension GameScene{
     }
     
     func playBackgroundMusic() {
+        isMusicPlaying = true
         if let musicURL = Bundle.main.url(forResource: "backgroundMusic", withExtension: "mp3") {
             backgrounMusic = SKAudioNode(url: musicURL)
             addChild(backgrounMusic!)
         }
+    }
+    
+    func pauseBackgroundMusic() {
+        isMusicPlaying = false
+        backgrounMusic?.run(SKAction.pause())
     }
     
     func setupScore(){
@@ -344,16 +386,33 @@ extension GameScene{
         addChild(scoreLabel)
     }
     @objc func addPoints(){
-        numScore += 10
-        scoreLabel.text = "\(numScore)"
+        if !gameOver {
+            numScore += 10
+            scoreLabel.text = "\(numScore)"
+        }
     }
     
     func setupGameOver(){
+        gameOver = true
         if numScore > highscore{highscore = numScore}
+        
+        backgrounMusic?.run(SKAction.pause())
+        obstacleSpawnTimer?.isValid ?? false ? obstacleSpawnTimer?.invalidate() : startObstacleSpawnTimer()
+        paperSpawntimer?.isValid ?? false ? paperSpawntimer?.invalidate() : startPaperSpawnTimer()
+        
+        var death: [SKTexture] = []
+        for i in 0...9{
+            death.append(SKTexture(imageNamed: "0\(i)_Death"))
+        }
+        player.run(.repeat(.animate(with: death, timePerFrame: 0.1), count: 1)){
+            self.loadGameOverScene()
+        }
+    }
+    
+    func loadGameOverScene(){
         let scene = GameOver(size: size)
         scene.scaleMode = scaleMode
         view!.presentScene(scene,transition: .doorsCloseVertical(withDuration: 0.8))
-        
     }
     
     @objc func setupPaper(){
@@ -377,19 +436,20 @@ extension GameScene{
         
         self.addChild(paper)
         
-        let moveAction = SKAction.moveTo(x: -paper.size.width, duration: 3)
-        let removeAction = SKAction.removeFromParent()
-        paper.run(SKAction.sequence([moveAction, removeAction]))
-
+        if !gameOver{
+            let moveAction = SKAction.moveTo(x: -paper.size.width, duration: 3)
+            let removeAction = SKAction.removeFromParent()
+            paper.run(SKAction.sequence([moveAction, removeAction]))
+        }
     }
+    
     func startPaperSpawnTimer(){
         paperSpawntimer = Timer.scheduledTimer(timeInterval: TimeInterval.random(in: 2...6), target: self,
                                                   selector: #selector(setupPaper), userInfo: nil, repeats: true)
     }
+    
     func startTimer(){
         timer = Timer.scheduledTimer(timeInterval: intervalloDiAggiornamento, target: self,
                                      selector: #selector(addPoints), userInfo: nil, repeats: true)
     }
-    
-  
 }

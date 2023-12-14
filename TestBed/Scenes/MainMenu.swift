@@ -40,9 +40,11 @@ class MainMenu: SKScene{
         }else if node.name == "container"{
             containerNode.removeFromParent()
         }else if node.name == "music"{
-            
+            print("music")
+            GameScene.shared.pauseBackgroundMusic()
         }else if node.name == "effect"{
-        
+            print("effect")
+            GameScene.shared.playBackgroundMusic()
         }
         
     }
@@ -129,15 +131,15 @@ extension MainMenu{
        panel.zPosition = 20.0
        containerNode.addChild(panel)
        
-       let resume = SKSpriteNode(imageNamed: "resume")
-       resume.name = "resume"
+       let resume = SKSpriteNode(imageNamed: "effectOn")
+       resume.name = "effect"
        resume.zPosition = 70.0
        resume.setScale(0.7)
        resume.position = CGPoint(x: -panel.frame.width/2.0 + resume.frame.width * 2.5, y: 0.0)
        panel.addChild(resume)
        
-       let quit = SKSpriteNode(imageNamed: "back")
-       quit.name = "home"
+       let quit = SKSpriteNode(imageNamed: "musicOn")
+       quit.name = "music"
        quit.zPosition = 70.0
        quit.setScale(0.7)
        quit.position = CGPoint(x: panel.frame.width/2.0 - quit.frame.width * 2.5, y: 0.0)

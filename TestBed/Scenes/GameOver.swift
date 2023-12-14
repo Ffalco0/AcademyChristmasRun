@@ -66,14 +66,13 @@ extension GameOver{
     func setupNodes(){
         setupContainer()
         
-        let panel = SKSpriteNode(imageNamed: "panel")
-        panel.setScale(1.5)
+        let panel = SKSpriteNode()
         panel.position = .zero
         panel.zPosition = 20.0
         containerNode.addChild(panel)
        
         gameOverLable.text = "Game Over"
-        gameOverLable.fontSize = 80.0
+        gameOverLable.fontSize = 150.0
         gameOverLable.horizontalAlignmentMode = .center
         gameOverLable.verticalAlignmentMode = .center
         gameOverLable.zPosition = 50.0
@@ -82,7 +81,7 @@ extension GameOver{
         panel.addChild(gameOverLable)
         
         gameOverSubLable.text = "Tap anywhere to continue"
-        gameOverSubLable.fontSize = 40.0
+        gameOverSubLable.fontSize = 50.0
         gameOverSubLable.horizontalAlignmentMode = .center
         gameOverSubLable.verticalAlignmentMode = .center
         gameOverSubLable.zPosition = 50.0
