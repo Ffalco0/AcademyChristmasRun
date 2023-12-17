@@ -72,7 +72,7 @@ class MainMenu: SKScene{
         if node.name == "play"{
             let scene = GameScene(size:size)
             scene.scaleMode = scaleMode
-            view!.presentScene(scene,transition: .push(with: .left, duration: 2.0))
+            view!.presentScene(scene,transition: .push(with: .left, duration: 2.5))
         }else if node.name == "highscore"{
             setupPanel()
         }else if node.name == "setting"{
@@ -81,7 +81,7 @@ class MainMenu: SKScene{
             containerNode.removeFromParent()
         }else if node.name == "music"{
             let node = node as! SKSpriteNode
-            MusicManager.shared.setMuteMusic()
+            audioManager.setMuteMusic()
             node.texture = SKTexture(imageNamed: audioManager.checkMuteMusic() ? "musicOn" : "musicOff")
         }else if node.name == "effect"{
             let node = node as! SKSpriteNode

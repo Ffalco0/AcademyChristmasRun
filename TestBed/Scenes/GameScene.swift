@@ -46,6 +46,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var difficulty:TimeInterval = 3.0
     var gameOver:Bool = false
     var onGround:Bool = true
+    var started = false
     
  
     
@@ -86,17 +87,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         difficulty = 3.0
         velocity = 7.0
         numScore = 0
-        //Start Background Music
-        MusicManager.shared.playBackgroundMusic()
-        // Start Timer
-        startTimer()//timer for the points
-        startObstacleSpawnTimer()
-        startPaperSpawnTimer()
-        updateDifficulty()
+        
+        audioManager.playBackgroundMusic()
+        
+        //Create an intro ti the scene
+        let introX = SKAction.moveTo(x: frame.midX/2.0, duration: 2.5)
+        player.run(.repeat(introX, count: 1)){
+            // Start Timer
+            self.startTimer()//timer for the points
+            self.startObstacleSpawnTimer()
+            self.startPaperSpawnTimer()
+            self.updateDifficulty()
+            self.started = true
+        }
     }
     
       override func update(_ currentTime: TimeInterval) {
-          if !gameOver {
+          if !gameOver && started{
               moveGrounds()
               moveBg()
               vel += gravity
@@ -125,7 +132,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             scene.scaleMode = scaleMode
             view!.presentScene(scene,transition: .doorsCloseVertical(withDuration: 0.8))
         }else{
-            if !gamePaused{
+            if !gamePaused && started{
                 if onGround && !gameOver{
                     onGround = false
                     vel = -25.0
@@ -191,7 +198,6 @@ extension GameScene{
         createBg()
         createGround()
         createPlayer()
-        setupPaper()
         setupPause()
         setupScore()
         createPauseMenu()
@@ -199,15 +205,7 @@ extension GameScene{
         playJumpSound()
         playDeathSound()
     }
-    
-    @objc func increaseVelocity(){
-        if((numScore % 200) == 0) && numScore > 0 {
-            if (difficulty > 0.5){
-                difficulty -= 0.2
-                velocity += 0.5
-            }
-        }
-    }
+
     //MARK: - Music
     func playCollectibleSound() {
         if let coinSoundURL = Bundle.main.url(forResource: "collectible", withExtension: "wav") {
@@ -311,7 +309,7 @@ extension GameScene{
         player.run(.repeatForever(.animate(with: textures, timePerFrame: 0.08)))
         
         player.setScale(1.2)
-        player.position = CGPoint(x: frame.midX/2.0,
+        player.position = CGPoint(x: frame.minX - player.size.width,
                                   y: frame.midY - 200.0)
         player.zPosition = 5.0
         player.physicsBody = SKPhysicsBody(circleOfRadius: self.player.size.width/3.5)
@@ -342,12 +340,6 @@ extension GameScene{
         }
     }
     
-    //Gestiamo gli ostacoli
-    func startObstacleSpawnTimer() {
-        obstacleSpawnTimer = Timer.scheduledTimer(timeInterval: difficulty, target: self,
-                                                  selector: #selector(spawnObstacle), userInfo: nil, repeats: true)
-    }
-    
     @objc func spawnObstacle() {
         guard let randomObstacleType = obstacleTypes.randomElement() else { return }
         
@@ -357,7 +349,7 @@ extension GameScene{
         obstacle.zPosition = 5.0
         obstacle.setScale(0.3)
         
-        let sizePhysics = CGSize(width: obstacle.size.width / 2.0, height: obstacle.size.height / 1.5)
+        let sizePhysics = CGSize(width: obstacle.size.width / 2.0, height: obstacle.size.height)
         obstacle.physicsBody = SKPhysicsBody(rectangleOf: sizePhysics)
         obstacle.physicsBody?.affectedByGravity = true
         obstacle.physicsBody?.isDynamic = true
@@ -429,10 +421,10 @@ extension GameScene{
         //Handle music during pause
         if gamePaused {
             timer?.invalidate()
-            MusicManager.shared.pauseBackgroundMusic()
+           audioManager.pauseBackgroundMusic()
         } else {
             startTimer()
-            MusicManager.shared.resumeBackgroundMusic()
+            audioManager.resumeBackgroundMusic()
         }
         
         // Metti in pausa o riprendi la scena e il timer degli ostacoli
@@ -442,6 +434,15 @@ extension GameScene{
         
         // Mostra o nascondi il menu di pausa
         pauseMenu?.isHidden = !gamePaused
+    }
+    //Used by timer to increase difficulty every 200 points
+    @objc func increaseVelocity(){
+        if((numScore % 200) == 0) && numScore > 0 {
+            if (difficulty > 0.5){
+                difficulty -= 0.5
+                velocity += 0.5
+            }
+        }
     }
     //Handle the function to count points
     @objc func addPoints(){
@@ -464,7 +465,7 @@ extension GameScene{
             player.run(move)
         }
         
-        MusicManager.shared.pauseBackgroundMusic()
+        audioManager.pauseBackgroundMusic()
         if !audioManager.checkMute(){
             deathSound?.play()
         }
@@ -482,7 +483,7 @@ extension GameScene{
     }
     //Game over Scene
     func loadGameOverScene(){
-        MusicManager.shared.pauseBackgroundMusic()
+        audioManager.pauseBackgroundMusic()
         let scene = GameOver(size: size)
         scene.scaleMode = scaleMode
         view!.presentScene(scene,transition: .doorsCloseVertical(withDuration: 0.8))
@@ -518,18 +519,27 @@ extension GameScene{
         }
     }
     //MARK: - Timers
+    //Gestiamo gli ostacoli
+    func startObstacleSpawnTimer() {
+        print("started")
+        obstacleSpawnTimer = Timer.scheduledTimer(timeInterval: difficulty, target: self,
+                                                  selector: #selector(spawnObstacle), userInfo: nil, repeats: true)
+    }
     //Timer to make epaper Spawn
     func startPaperSpawnTimer(){
+        print("started")
         paperSpawntimer = Timer.scheduledTimer(timeInterval: TimeInterval.random(in: 10...15), target: self,
                                                   selector: #selector(setupPaper), userInfo: nil, repeats: true)
     }
     //Regular Timer
     func startTimer(){
+        print("started")
         timer = Timer.scheduledTimer(timeInterval: timerUpdate, target: self,
                                      selector: #selector(addPoints), userInfo: nil, repeats: true)
     }
     //Timer to increase difficulty
     func updateDifficulty(){
+        print("started")
         difficultyTimer = Timer.scheduledTimer(timeInterval: timerUpdate, target: self,
                                      selector: #selector(increaseVelocity), userInfo: nil, repeats: true)
     }
