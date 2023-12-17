@@ -30,14 +30,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var velocity:CGFloat = 7.0//Change this value to modify the movement speed
     var difficulty:TimeInterval = 3.0
     var gameOver:Bool = false
-    
-    
-    var startTouch = CGPoint()
-    var endTouch = CGPoint()
     var onGround:Bool = true
     
-    var obstacleSpawnTimer: Timer?
-    var paperSpawntimer: Timer?
+ 
     
     //Pause Element
     var gamePaused = false
@@ -51,10 +46,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 
     //Timer
     var timer: Timer? //Timer to count time for point and seconds
-    var intervalloDiAggiornamento: TimeInterval = 1.0  //we can set the time interval(in this case evry 1 second)
-    var lastUpdateTime: TimeInterval = 0
+    var timerUpdate: TimeInterval = 1.0  //we can set the time interval(in this case evry 1 second)
+    var difficultyTimer:Timer?
+    var obstacleSpawnTimer: Timer?
+    var paperSpawntimer: Timer?
+
     
-    //Prova salto old
+    //Variables to handle the jump
     var vel:CGFloat = 0.0
     var gravity:CGFloat = 0.6
     var playerPosY:CGFloat = 0.0
@@ -70,6 +68,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //Setup scene
         self.anchorPoint = .zero
         physicsWorld.contactDelegate = self
+        
         setUpNodes()
         
         //Set up variables
@@ -82,7 +81,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         startTimer()//timer for the points
         startObstacleSpawnTimer()
         startPaperSpawnTimer()
-        increaseVelocity()
+        updateDifficulty()
     }
     
       override func update(_ currentTime: TimeInterval) {
@@ -96,6 +95,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                   vel = 0.0
                   onGround = true
               }
+              
               
           }
       }
@@ -190,13 +190,14 @@ extension GameScene{
         playJumpSound()
         playDeathSound()
     }
-    func increaseVelocity(){
-        if((numScore % 200) == 0) {
+    
+    @objc func increaseVelocity(){
+        print("prova")
+        if((numScore % 200) == 0) && numScore > 0 {
             if (difficulty > 0.5){
-                
                 difficulty -= 0.2
-                print(difficulty)
                 velocity += 0.5
+                print(difficulty)
                 print(velocity)
             }
         }
@@ -517,7 +518,12 @@ extension GameScene{
     }
     //Regular Timer
     func startTimer(){
-        timer = Timer.scheduledTimer(timeInterval: intervalloDiAggiornamento, target: self,
+        timer = Timer.scheduledTimer(timeInterval: timerUpdate, target: self,
                                      selector: #selector(addPoints), userInfo: nil, repeats: true)
+    }
+    //Timer to increase difficulty
+    func updateDifficulty(){
+        difficultyTimer = Timer.scheduledTimer(timeInterval: timerUpdate, target: self,
+                                     selector: #selector(increaseVelocity), userInfo: nil, repeats: true)
     }
 }
