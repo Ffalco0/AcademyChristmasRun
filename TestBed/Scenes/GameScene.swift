@@ -7,8 +7,23 @@
 
 import SpriteKit
 import GameplayKit
-import SwiftUI
 import AVFoundation
+
+class HighScoreData{
+    static let shared = HighScoreData()
+    
+    private init() {}
+    
+    //Remember highscore
+    var highscore:Int {
+        get{
+            return UserDefaults.standard.integer(forKey: "highscore")
+        }
+        set{
+            UserDefaults.standard.set(newValue, forKey: "highscore")
+        }
+    }
+}
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     struct PhysicsCategory{
@@ -41,8 +56,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //Score element
     var scoreLabel = SKLabelNode(fontNamed:"ARCADECLASSIC")
     var numScore:Int = 0
-    //Remember highscore
-    @AppStorage("highscore") var highscore:Int = 0
 
     //Timer
     var timer: Timer? //Timer to count time for point and seconds
@@ -107,7 +120,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }else if node.name == "resume"{
             togglePause()
         }else if node.name == "home"{
-            if numScore > highscore{highscore = numScore}
+            if numScore > HighScoreData.shared.highscore{HighScoreData.shared.highscore = numScore}
             let scene = MainMenu(size: size)
             scene.scaleMode = scaleMode
             view!.presentScene(scene,transition: .doorsCloseVertical(withDuration: 0.8))
@@ -455,7 +468,7 @@ extension GameScene{
         if !audioManager.checkMute(){
             deathSound?.play()
         }
-        if numScore > highscore{highscore = numScore}
+        if numScore > HighScoreData.shared.highscore{HighScoreData.shared.highscore = numScore}
         
         var death: [SKTexture] = []
         for i in 0...8{

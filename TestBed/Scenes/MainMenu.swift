@@ -6,7 +6,6 @@
 //
 
 import SpriteKit
-import SwiftUI
 import UIKit
 
 var containerNode:SKSpriteNode!
@@ -20,14 +19,6 @@ var titleLabel:SKLabelNode!
 
 class MainMenu: SKScene{
     var audioManager = MusicManager.shared
-    @AppStorage("highscore") var highscore:Int = 0
-    
-    //let result = condition ? trueValue : falseValue
-
-    
-    
-
-    
     
     //MARK: - System
     override func didMove(to view: SKView) {
@@ -236,7 +227,7 @@ extension MainMenu{
         containerNode.addChild(panel)
         
         //highscore
-        highscoreLabel.text = "High Score: \(highscore)"
+        highscoreLabel.text = "High Score: \(HighScoreData.shared.highscore)"
         highscoreLabel.fontSize = 60.0
         highscoreLabel.fontColor = UIColor.black
         highscoreLabel.horizontalAlignmentMode = .center
