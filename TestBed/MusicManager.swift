@@ -13,12 +13,29 @@ class MusicManager {
     static let shared = MusicManager()
 
     private var backgroundMusicPlayer: AVAudioPlayer?
-    @AppStorage("isMusicPlaying") var isMusicPlaying:Bool = true//It will remember the user preferences!
-
-    private init() {
-
-        // Inizializzazione, ad esempio, caricamento delle tracce audio
-    }
+    //Sounds
+    private var coinSound:AVAudioPlayer?
+    private var deathSound:AVAudioPlayer?
+    private var jumpSound:AVAudioPlayer?
+    
+    private var isMusicPlaying: Bool {
+        get{
+            return UserDefaults.standard.bool(forKey: "isMusicPlaying")
+        }
+        set{
+            UserDefaults.standard.set(newValue, forKey: "isMusicPlaying")
+        }
+    }//It will remember the user preferences!
+    private var isMutedSounds: Bool {
+        get{
+            return UserDefaults.standard.bool(forKey: "isMutedSounds")
+        }
+        set{
+            UserDefaults.standard.set(newValue, forKey: "isMutedSounds")
+        }
+    }//It will remember the user preferences!
+    
+    private init() {}
     
     func playBackgroundMusic() {
         if isMusicPlaying{
@@ -29,6 +46,7 @@ class MusicManager {
             do {
                 backgroundMusicPlayer = try AVAudioPlayer(contentsOf: musicURL)
                 backgroundMusicPlayer?.numberOfLoops = -1
+                backgroundMusicPlayer?.volume = 0.5
                 backgroundMusicPlayer?.prepareToPlay()
                 
                 if isMusicPlaying{backgroundMusicPlayer?.play()}
@@ -37,19 +55,28 @@ class MusicManager {
             }
         }
     }
-
+    func checkMuteMusic() -> Bool{
+        return isMusicPlaying
+    }
     func pauseBackgroundMusic() {
-        isMusicPlaying = false
         backgroundMusicPlayer?.pause()
     }
 
     func resumeBackgroundMusic() {
-        isMusicPlaying = true
         backgroundMusicPlayer?.play()
     }
     func setMuteMusic(){
         isMusicPlaying = !isMusicPlaying
-        print(isMusicPlaying)
+    }
+    
+    //MARK: -Sounds
+    
+    func checkMute() -> Bool{
+        return isMutedSounds
+    }
+    func toggleMute() {
+        isMutedSounds = !isMutedSounds
     }
 }
+
 

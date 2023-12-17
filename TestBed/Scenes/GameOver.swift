@@ -14,8 +14,8 @@ import SwiftUI
 
 class GameOver: SKScene{
     
-    var gameOverLable = SKLabelNode(fontNamed:"SanFrancisco")
-    var gameOverSubLable = SKLabelNode(fontNamed:"SanFrancisco")
+    var gameOverLable = SKLabelNode(fontNamed:"ARCADECLASSIC")
+    var gameOverSubLable = SKLabelNode(fontNamed:"ARCADECLASSIC")
     //MARK: - System
     override func didMove(to view: SKView) {
         createBG()
@@ -72,7 +72,7 @@ extension GameOver{
         containerNode.addChild(panel)
        
         gameOverLable.text = "Game Over"
-        gameOverLable.fontSize = 150.0
+        gameOverLable.fontSize = 200.0
         gameOverLable.horizontalAlignmentMode = .center
         gameOverLable.verticalAlignmentMode = .center
         gameOverLable.zPosition = 50.0

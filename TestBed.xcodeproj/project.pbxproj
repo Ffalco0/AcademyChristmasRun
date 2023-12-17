@@ -11,6 +11,10 @@
 		743BF82C2B263B7100C4F589 /* GameOver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 743BF82B2B263B7100C4F589 /* GameOver.swift */; };
 		743BF8C62B2BC14100C4F589 /* MusicManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 743BF8C52B2BC14100C4F589 /* MusicManager.swift */; };
 		743BF8C82B2BC1A400C4F589 /* Its_Snowtime_MP3.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 743BF8C72B2BC1A400C4F589 /* Its_Snowtime_MP3.mp3 */; };
+		743BF8DB2B2EEEFE00C4F589 /* Font in Resources */ = {isa = PBXBuildFile; fileRef = 743BF8DA2B2EEEFE00C4F589 /* Font */; };
+		743BF8DE2B2EEF9E00C4F589 /* jump.wav in Resources */ = {isa = PBXBuildFile; fileRef = 743BF8DD2B2EEF9E00C4F589 /* jump.wav */; };
+		743BF8E02B2EEFAE00C4F589 /* collectible.wav in Resources */ = {isa = PBXBuildFile; fileRef = 743BF8DF2B2EEFAE00C4F589 /* collectible.wav */; };
+		743BF8E22B2EEFB400C4F589 /* death.wav in Resources */ = {isa = PBXBuildFile; fileRef = 743BF8E12B2EEFB400C4F589 /* death.wav */; };
 		74B420022B1F36AC00EF9172 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74B420012B1F36AC00EF9172 /* AppDelegate.swift */; };
 		74B420042B1F36AC00EF9172 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 74B420032B1F36AC00EF9172 /* GameScene.sks */; };
 		74B420062B1F36AC00EF9172 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 74B420052B1F36AC00EF9172 /* Actions.sks */; };
@@ -26,6 +30,11 @@
 		743BF82B2B263B7100C4F589 /* GameOver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOver.swift; sourceTree = "<group>"; };
 		743BF8C52B2BC14100C4F589 /* MusicManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MusicManager.swift; sourceTree = "<group>"; };
 		743BF8C72B2BC1A400C4F589 /* Its_Snowtime_MP3.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Its_Snowtime_MP3.mp3; sourceTree = "<group>"; };
+		743BF8DA2B2EEEFE00C4F589 /* Font */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Font; sourceTree = "<group>"; };
+		743BF8DC2B2EEF1E00C4F589 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		743BF8DD2B2EEF9E00C4F589 /* jump.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = jump.wav; path = ../../../../Downloads/jump.wav; sourceTree = "<group>"; };
+		743BF8DF2B2EEFAE00C4F589 /* collectible.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = collectible.wav; sourceTree = "<group>"; };
+		743BF8E12B2EEFB400C4F589 /* death.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = death.wav; path = ../../../../Downloads/death.wav; sourceTree = "<group>"; };
 		74B41FFE2B1F36AC00EF9172 /* TestBed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestBed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		74B420012B1F36AC00EF9172 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		74B420032B1F36AC00EF9172 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -51,6 +60,9 @@
 		743BF8AD2B29EA4C00C4F589 /* Sounds */ = {
 			isa = PBXGroup;
 			children = (
+				743BF8E12B2EEFB400C4F589 /* death.wav */,
+				743BF8DD2B2EEF9E00C4F589 /* jump.wav */,
+				743BF8DF2B2EEFAE00C4F589 /* collectible.wav */,
 				743BF8C72B2BC1A400C4F589 /* Its_Snowtime_MP3.mp3 */,
 			);
 			name = Sounds;
@@ -104,10 +116,12 @@
 		74B420002B1F36AC00EF9172 /* TestBed */ = {
 			isa = PBXGroup;
 			children = (
+				743BF8DC2B2EEF1E00C4F589 /* Info.plist */,
 				74B420012B1F36AC00EF9172 /* AppDelegate.swift */,
 				74B420032B1F36AC00EF9172 /* GameScene.sks */,
 				74B420052B1F36AC00EF9172 /* Actions.sks */,
 				743BF8C52B2BC14100C4F589 /* MusicManager.swift */,
+				743BF8DA2B2EEEFE00C4F589 /* Font */,
 				743BF8AD2B29EA4C00C4F589 /* Sounds */,
 				744C3CE52B21C86900AEC953 /* Scenes */,
 				744C3CE42B21C85200AEC953 /* Controllers */,
@@ -174,8 +188,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				743BF8DE2B2EEF9E00C4F589 /* jump.wav in Resources */,
 				74B4200D2B1F36AC00EF9172 /* Main.storyboard in Resources */,
+				743BF8E02B2EEFAE00C4F589 /* collectible.wav in Resources */,
 				743BF8C82B2BC1A400C4F589 /* Its_Snowtime_MP3.mp3 in Resources */,
+				743BF8DB2B2EEEFE00C4F589 /* Font in Resources */,
+				743BF8E22B2EEFB400C4F589 /* death.wav in Resources */,
 				74B420042B1F36AC00EF9172 /* GameScene.sks in Resources */,
 				74B4200F2B1F36AD00EF9172 /* Assets.xcassets in Resources */,
 				74B420122B1F36AD00EF9172 /* LaunchScreen.storyboard in Resources */,
@@ -349,7 +367,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 76686GRWFP;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "";
+				INFOPLIST_FILE = TestBed/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -377,7 +395,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 76686GRWFP;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "";
+				INFOPLIST_FILE = TestBed/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

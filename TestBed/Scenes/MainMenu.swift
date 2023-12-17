@@ -7,46 +7,72 @@
 
 import SpriteKit
 import SwiftUI
+import UIKit
 
 var containerNode:SKSpriteNode!
-var highscoreLabel = SKLabelNode(fontNamed:"Chalkduster")
+var highscoreLabel = SKLabelNode(fontNamed:"ARCADECLASSIC")
 var dialogLabel: SKLabelNode!
 var dialogBackground: SKSpriteNode!
+var titleLabel:SKLabelNode!
+
 
 
 
 class MainMenu: SKScene{
+    var audioManager = MusicManager.shared
     @AppStorage("highscore") var highscore:Int = 0
+    
+    //let result = condition ? trueValue : falseValue
+
+    
+    
+
+    
     
     //MARK: - System
     override func didMove(to view: SKView) {
         self.anchorPoint = .zero
+        backgroundColor = UIColor(hex: 0xF4EAE4)
         
-        createBg()
         setupBarbara()
         createGround()
         setupNodes()
         
-        dialogBackground = SKSpriteNode(color: SKColor.white, size: CGSize(width: 700, height: 200))
-        dialogBackground.alpha = 0.7  // Opacità dello sfondo
-        dialogBackground.position = CGPoint(x: size.width / 3.0, y: size.height / 1.45)
-        addChild(dialogBackground)
-        // Creare il nodo di testo per il dialogo
-        dialogLabel = SKLabelNode(fontNamed: "Helvetica")
-        dialogLabel.text = ""
-        dialogLabel.fontSize = 50
-        dialogLabel.zPosition = 50.0
-        dialogLabel.position = CGPoint(x: size.width / 3.0, y: size.height / 1.5)
+        titleLabel = SKLabelNode(fontNamed: "KarmaticArcade")
+        titleLabel.text = "Late Deliverable"
+        titleLabel.zPosition = 20.0
+        titleLabel.fontSize = 80
+        titleLabel.fontColor = UIColor.black
+        titleLabel.position = CGPoint(x: frame.midX, y: frame.midY * 1.5)
+        addChild(titleLabel)
         
-        dialogLabel.numberOfLines = 0  // Abilita il word wrapping
-        dialogLabel.preferredMaxLayoutWidth = dialogBackground.size.width - 20  // Imposta la larghezza massima
+        dialogBackground = SKSpriteNode(color: SKColor.white, size: CGSize(width: 400, height: 150))
+        dialogBackground.alpha = 0.7  // Opacità dello sfondo
+        dialogBackground.position = CGPoint(x: size.width / 5.7, y: size.height / 1.55)
+        addChild(dialogBackground)
+        
+        // Creare il nodo di testo per il dialogo
+        dialogLabel = SKLabelNode(fontNamed: "ARCADECLASSIC")
+        dialogLabel.text = ""
+        dialogLabel.fontColor = UIColor.black
+        dialogLabel.fontSize = 30
+        dialogLabel.zPosition = 50.0
+        dialogLabel.position = CGPoint(x: dialogBackground.position.x, y: dialogBackground.position.y - 20.0)
+        
+        dialogLabel.numberOfLines = 0  // word wrapping
+        dialogLabel.preferredMaxLayoutWidth = dialogBackground.size.width - 20
         addChild(dialogLabel)
         
         dialogBackground.zPosition = dialogLabel.zPosition - 1
         
-        let phrases = [ "Hi welcome to the academy!","Did you forget about the final deliverable?!?!","I tell you only one thing...RUN","Tap to jump"]
+        let phrases = [ "Hi welcome to the academy!","Did you forget about the final deliverable?!?!","I tell you only one thing...","RUN!!!","P.S. Tap to jump"]
         showTextWithBackground(phrases: phrases)
     }
+    
+    override func update(_ currentTime: TimeInterval) {
+        
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
         guard let touch = touches.first else {return}
@@ -55,7 +81,7 @@ class MainMenu: SKScene{
         if node.name == "play"{
             let scene = GameScene(size:size)
             scene.scaleMode = scaleMode
-            view!.presentScene(scene,transition: .doorsOpenVertical(withDuration: 0.8))
+            view!.presentScene(scene,transition: .push(with: .left, duration: 2.0))
         }else if node.name == "highscore"{
             setupPanel()
         }else if node.name == "setting"{
@@ -63,11 +89,13 @@ class MainMenu: SKScene{
         }else if node.name == "container"{
             containerNode.removeFromParent()
         }else if node.name == "music"{
-            print("music")
+            let node = node as! SKSpriteNode
             MusicManager.shared.setMuteMusic()
+            node.texture = SKTexture(imageNamed: audioManager.checkMuteMusic() ? "musicOn" : "musicOff")
         }else if node.name == "effect"{
-            print("effect")
-            
+            let node = node as! SKSpriteNode
+            audioManager.toggleMute()
+            node.texture = SKTexture(imageNamed: audioManager.checkMute() ? "effectOff" : "effectOn")
         }
         
     }
@@ -75,18 +103,6 @@ class MainMenu: SKScene{
 
 //MARK: - Configurations
 extension MainMenu{
-    func createBg(){
-        for i in 0...2{
-            let bg = SKSpriteNode(imageNamed: "Bg\(i)")
-            bg.name = "BG"
-            bg.setScale(0.62)
-            bg.anchorPoint = .zero
-            bg.position = CGPoint(x: CGFloat(i) * bg.size.width, y: frame.midY - bg.frame.height/2.0)
-            bg.zPosition = -1.0
-            self.addChild(bg)
-        }
-    }
-    
     // Funzione per visualizzare un elenco di frasi con uno sfondo comune
     func showTextWithBackground(phrases: [String]) {
         // Verifica che ci siano frasi
@@ -189,29 +205,31 @@ extension MainMenu{
     func setupNodes(){
         let play = SKSpriteNode(imageNamed: "play")
         play.name = "play"
-        play.setScale(0.85)
+        play.setScale(0.5)
         play.zPosition = 10.0
-        play.position = CGPoint(x: size.width/1.3, y: size.height/2.0 + play.size.height + 50.0)
+        play.position = CGPoint(x: frame.midX, y: frame.midY)
         addChild(play)
         
         let highscore = SKSpriteNode(imageNamed: "highscore")
         highscore.name = "highscore"
-        highscore.setScale(0.85)
+        highscore.setScale(0.2)
         highscore.zPosition = 10.0
-        highscore.position = CGPoint(x: size.width/1.3, y: size.height/2.0)
+        highscore.position = CGPoint(x: frame.minX + 100.0,
+                                     y: frame.minY + highscore.frame.height * 1.35)
         addChild(highscore)
         
         let setting = SKSpriteNode(imageNamed: "setting")
         setting.name = "setting"
-        setting.setScale(0.85)
+        setting.setScale(0.2)
         setting.zPosition = 10.0
-        setting.position = CGPoint(x: size.width/1.3, y: size.height/2.0 - setting.size.height - 50.0)
+        setting.position = CGPoint(x: frame.maxX - 100.0,
+                                   y: frame.minY + setting.frame.height * 1.35 )
         addChild(setting)
     }
     func setupPanel(){
         setupContainer()
         
-        let panel = SKSpriteNode(imageNamed: "panel")
+        let panel = SKSpriteNode(color: SKColor.white, size: CGSize(width: 700, height: 200))
         panel.setScale(1.5)
         panel.position = .zero
         panel.zPosition = 20.0
@@ -220,6 +238,7 @@ extension MainMenu{
         //highscore
         highscoreLabel.text = "High Score: \(highscore)"
         highscoreLabel.fontSize = 60.0
+        highscoreLabel.fontColor = UIColor.black
         highscoreLabel.horizontalAlignmentMode = .center
         highscoreLabel.verticalAlignmentMode = .center
         highscoreLabel.zPosition = 50.0
@@ -229,22 +248,25 @@ extension MainMenu{
     }
     
    func setupSetting(){
+       
        setupContainer()
        
-       let panel = SKSpriteNode(imageNamed: "panel")
+       let panel = SKSpriteNode(color: SKColor.white, size: CGSize(width: 700, height: 200))
        panel.setScale(1.5)
        panel.position = .zero
        panel.zPosition = 20.0
        containerNode.addChild(panel)
        
-       let resume = SKSpriteNode(imageNamed: "effectOn")
+       let effect = audioManager.checkMute() ? "effectOff" : "effectOn"
+       let resume = SKSpriteNode(imageNamed: effect)
        resume.name = "effect"
        resume.zPosition = 70.0
        resume.setScale(0.7)
        resume.position = CGPoint(x: -panel.frame.width/2.0 + resume.frame.width * 2.5, y: 0.0)
        panel.addChild(resume)
        
-       let quit = SKSpriteNode(imageNamed: "musicOn")
+       let music = audioManager.checkMuteMusic() ? "musicOn" : "musicOff"
+       let quit = SKSpriteNode(imageNamed: music)
        quit.name = "music"
        quit.zPosition = 70.0
        quit.setScale(0.7)
@@ -262,3 +284,15 @@ extension MainMenu{
         addChild(containerNode)
     }
 }
+
+extension UIColor {
+    convenience init(hex: Int, alpha: CGFloat = 1.0) {
+        self.init(
+            red: CGFloat((hex & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((hex & 0x00FF00) >> 8) / 255.0,
+            blue: CGFloat(hex & 0x0000FF) / 255.0,
+            alpha: alpha
+        )
+    }
+}
+
