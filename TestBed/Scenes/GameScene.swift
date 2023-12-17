@@ -68,16 +68,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //Setup scene
         self.anchorPoint = .zero
         physicsWorld.contactDelegate = self
-        
         setUpNodes()
-        
         //Set up variables
         difficulty = 3.0
         velocity = 7.0
         numScore = 0
-        
-        // Start Timer, add points
+        //Start Background Music
         MusicManager.shared.playBackgroundMusic()
+        // Start Timer
         startTimer()//timer for the points
         startObstacleSpawnTimer()
         startPaperSpawnTimer()
@@ -95,8 +93,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                   vel = 0.0
                   onGround = true
               }
-              
-              
           }
       }
     
@@ -192,13 +188,10 @@ extension GameScene{
     }
     
     @objc func increaseVelocity(){
-        print("prova")
         if((numScore % 200) == 0) && numScore > 0 {
             if (difficulty > 0.5){
                 difficulty -= 0.2
                 velocity += 0.5
-                print(difficulty)
-                print(velocity)
             }
         }
     }
@@ -511,6 +504,7 @@ extension GameScene{
             paper.run(SKAction.sequence([moveAction, removeAction]))
         }
     }
+    //MARK: - Timers
     //Timer to make epaper Spawn
     func startPaperSpawnTimer(){
         paperSpawntimer = Timer.scheduledTimer(timeInterval: TimeInterval.random(in: 10...15), target: self,
