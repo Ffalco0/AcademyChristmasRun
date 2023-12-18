@@ -32,7 +32,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         static let Ground:      UInt32 = 0b100
         static let Paper:      UInt32 = 0
     }
-        
+    
     //Elements
     var floor:SKSpriteNode!
     var player:SKSpriteNode!
@@ -56,7 +56,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //Score element
     var scoreLabel = SKLabelNode(fontNamed:"ARCADECLASSIC")
     var numScore:Int = 0
-
+    
     //Timer
     var timer: Timer? //Timer to count time for point and seconds
     var timerUpdate: TimeInterval = 1.0  //we can set the time interval(in this case evry 1 second)
@@ -64,7 +64,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var obstacleSpawnTimer: Timer?
     var paperSpawntimer: Timer?
     var macSpawnTimer: Timer?
-
+    
     
     //Variables to handle the jump
     var vel:CGFloat = 0.0
@@ -76,7 +76,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var deathSound:AVAudioPlayer?
     var jumpSound:AVAudioPlayer?
     var audioManager = MusicManager.shared
-
+    
     
     override func didMove(to view: SKView) {
         //Setup scene
@@ -103,19 +103,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-      override func update(_ currentTime: TimeInterval) {
-          if !gameOver && started{
-              moveGrounds()
-              moveBg()
-              vel += gravity
-              player.position.y -= vel
-              if player.position.y < playerPosY{
-                  player.position.y = playerPosY
-                  vel = 0.0
-                  onGround = true
-              }
-          }
-      }
+    override func update(_ currentTime: TimeInterval) {
+        if !gameOver && started{
+            moveGrounds()
+            moveBg()
+            vel += gravity
+            player.position.y -= vel
+            if player.position.y < playerPosY{
+                player.position.y = playerPosY
+                vel = 0.0
+                onGround = true
+            }
+        }
+    }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
@@ -123,7 +123,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         guard let touch = touches.first else {return}
         let node = atPoint(touch.location(in: self))
         
-        if node.name == "pause" {
+        if node.name == "pause" && started{
             togglePause()
         }else if node.name == "resume"{
             togglePause()
@@ -159,14 +159,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         if (bodyA.categoryBitMask == PhysicsCategory.Player && bodyB.categoryBitMask == PhysicsCategory.Paper){
-            addPoints()
+            paperPoints()
             contact.bodyB.node?.removeFromParent()
             if !audioManager.checkMute(){
                 coinSound?.volume = 0.5
                 coinSound?.play()
             }
         }else if (bodyA.categoryBitMask == PhysicsCategory.Paper && bodyB.categoryBitMask == PhysicsCategory.Player) {
-            addPoints()
+            paperPoints()
             contact.bodyA.node?.removeFromParent()
             if !audioManager.checkMute(){
                 coinSound?.volume = 0.5
@@ -208,7 +208,7 @@ extension GameScene{
         playJumpSound()
         playDeathSound()
     }
-
+    
     //MARK: - Music
     func playCollectibleSound() {
         if let coinSoundURL = Bundle.main.url(forResource: "collectible", withExtension: "wav") {
@@ -276,7 +276,7 @@ extension GameScene{
         mac = SKSpriteNode(imageNamed: "mac")
         mac.setScale(0.5)
         mac.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        mac.position = CGPoint(x: frame.maxX, y: frame.midY + CGFloat.random(in: 150...300))
+        mac.position = CGPoint(x: frame.maxX, y: frame.midY + CGFloat.random(in: 200...300))
         mac.zPosition = 5.0
         
         let rotate = SKAction.rotate(byAngle: 45, duration: 8)
@@ -386,11 +386,12 @@ extension GameScene{
         obstacle.run(SKAction.sequence([moveAction, removeAction]))
     }
     
-
+    
     //MARK: - UI
     func createPauseMenu(){
         //Create a pause menu
-        pauseMenu = SKSpriteNode(imageNamed: "panel")
+        pauseMenu = SKSpriteNode(color: SKColor.white, size: CGSize(width: 700, height: 350))
+        pauseMenu.setScale(1.5)
         pauseMenu.zPosition = 60.0
         pauseMenu.position = CGPoint(x: size.width / 2, y: size.height / 2)
         pauseMenu?.isHidden = true
@@ -400,24 +401,33 @@ extension GameScene{
         resume.name = "resume"
         resume.zPosition = 70.0
         resume.setScale(0.7)
-        resume.position = CGPoint(x: -pauseMenu.frame.width/2.0 + resume.frame.width * 1.3, y: 0.0)
+        resume.position = CGPoint(x: -pauseMenu.frame.width/2.0 + 350.0, y: 0.0)
         pauseMenu.addChild(resume)
         
         let quit = SKSpriteNode(imageNamed: "back")
         quit.name = "home"
         quit.zPosition = 70.0
         quit.setScale(0.61)
-        quit.position = CGPoint(x: pauseMenu.frame.width/2.0 - quit.frame.width * 1.3, y: 0.0)
+        quit.position = CGPoint(x: pauseMenu.frame.width/2.0 - 350.0, y: 0.0)
         pauseMenu.addChild(quit)
     }
     func setupPause(){
+   
+        
         let pauseNode = SKSpriteNode(imageNamed: "pause")
-        pauseNode.setScale(0.5)
+        pauseNode.setScale(0.25)
         pauseNode.zPosition = 50.0
-        pauseNode.name = "pause"
-        pauseNode.position = CGPoint(x: frame.maxX - pauseNode.frame.width ,
-                                     y: frame.maxY - pauseNode.frame.height * 3.0)
+        pauseNode.position = CGPoint(x: frame.maxX - 150.0,
+                                     y: frame.maxY - 400.0)
         self.addChild(pauseNode)
+        
+        let panel = SKSpriteNode(color: SKColor.white, size: CGSize(width: 150, height: 150))
+        panel.alpha = 0.01
+        panel.position = CGPoint(x: pauseNode.position.x,
+                                 y: pauseNode.position.y)
+        panel.name = "pause"
+        panel.zPosition = 55.0
+        addChild(panel)
     }
     func setupScore(){
         scoreLabel.text = "\(numScore)"
@@ -444,30 +454,36 @@ extension GameScene{
         //Handle music during pause
         if gamePaused {
             timer?.invalidate()
-           audioManager.pauseBackgroundMusic()
+            audioManager.pauseBackgroundMusic()
         } else {
             startTimer()
             audioManager.resumeBackgroundMusic()
         }
         
-        // Metti in pausa o riprendi la scena e il timer degli ostacoli
+        // Metti in pausa o riprendi la scena e i timer
         self.isPaused = gamePaused
         obstacleSpawnTimer?.isValid ?? false ? obstacleSpawnTimer?.invalidate() : startObstacleSpawnTimer()
         paperSpawntimer?.isValid ?? false ? paperSpawntimer?.invalidate() : startPaperSpawnTimer()
+        macSpawnTimer?.isValid ?? false ? macSpawnTimer?.invalidate() : spawnMac()
         
-        // Mostra o nascondi il menu di pausa
         pauseMenu?.isHidden = !gamePaused
     }
     //Used by timer to increase difficulty every 200 points
     @objc func increaseVelocity(){
         if((numScore % 200) == 0) && numScore > 0 {
             if (difficulty > 0.5){
-                difficulty -= 0.5
+                difficulty -= 1.0
                 velocity += 0.5
             }
         }
     }
     //Handle the function to count points
+    func paperPoints(){
+        if !gameOver {
+            numScore += 20
+            scoreLabel.text = "\(numScore)"
+        }
+    }
     @objc func addPoints(){
         if !gameOver {
             numScore += 10
@@ -477,10 +493,11 @@ extension GameScene{
     //Handle the game over sequence
     func setupGameOver(){
         gameOver = true
-
-      
+        
+        
         obstacleSpawnTimer?.isValid ?? false ? obstacleSpawnTimer?.invalidate() : startObstacleSpawnTimer()
         paperSpawntimer?.isValid ?? false ? paperSpawntimer?.invalidate() : startPaperSpawnTimer()
+        macSpawnTimer?.isValid ?? false ? macSpawnTimer?.invalidate() : spawnMac()
         
         if !onGround{
             let move = SKAction.moveTo(y: playerPosY, duration: 0.8)
@@ -501,7 +518,7 @@ extension GameScene{
         player.run(.repeat(.animate(with: death, timePerFrame: 0.2), count: 1)){
             self.loadGameOverScene()
         }
-       
+        
     }
     //Game over Scene
     func loadGameOverScene(){
@@ -549,7 +566,7 @@ extension GameScene{
     //Timer to make epaper Spawn
     func startPaperSpawnTimer(){
         paperSpawntimer = Timer.scheduledTimer(timeInterval: TimeInterval.random(in: 10...15), target: self,
-                                                  selector: #selector(setupPaper), userInfo: nil, repeats: true)
+                                               selector: #selector(setupPaper), userInfo: nil, repeats: true)
     }
     //Regular Timer
     func startTimer(){
@@ -559,10 +576,10 @@ extension GameScene{
     //Timer to increase difficulty
     func updateDifficulty(){
         difficultyTimer = Timer.scheduledTimer(timeInterval: timerUpdate, target: self,
-                                     selector: #selector(increaseVelocity), userInfo: nil, repeats: true)
+                                               selector: #selector(increaseVelocity), userInfo: nil, repeats: true)
     }
     func spawnMac(){
         macSpawnTimer = Timer.scheduledTimer(timeInterval: 10, target: self,
-                                     selector: #selector(setupMac), userInfo: nil, repeats: true)
+                                             selector: #selector(setupMac), userInfo: nil, repeats: true)
     }
 }

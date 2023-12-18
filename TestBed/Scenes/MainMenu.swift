@@ -252,16 +252,16 @@ extension MainMenu{
        let resume = SKSpriteNode(imageNamed: effect)
        resume.name = "effect"
        resume.zPosition = 70.0
-       resume.setScale(0.5)
-       resume.position = CGPoint(x: -panel.frame.width/2.0 + resume.frame.width * 3.0, y: 0.0)
+       resume.setScale(0.25)
+       resume.position = CGPoint(x: -panel.frame.width/2.0 + 350.0, y: 0.0)
        panel.addChild(resume)
        
        let music = audioManager.checkMuteMusic() ? "musicOn" : "musicOff"
        let quit = SKSpriteNode(imageNamed: music)
        quit.name = "music"
        quit.zPosition = 70.0
-       quit.setScale(0.5)
-       quit.position = CGPoint(x: panel.frame.width/2.0 - quit.frame.width * 3.0, y: 0.0)
+       quit.setScale(0.25)
+       quit.position = CGPoint(x: panel.frame.width/2.0 - 350.0, y: 0.0)
        panel.addChild(quit)
   
    }
