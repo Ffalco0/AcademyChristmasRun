@@ -276,7 +276,7 @@ extension GameScene{
         mac = SKSpriteNode(imageNamed: "mac")
         mac.setScale(0.5)
         mac.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        mac.position = CGPoint(x: frame.maxX, y: frame.midY + CGFloat.random(in: 200...300))
+        mac.position = CGPoint(x: frame.maxX, y: frame.midY + CGFloat.random(in: 280...300))
         mac.zPosition = 5.0
         
         let rotate = SKAction.rotate(byAngle: 45, duration: 8)
@@ -370,9 +370,9 @@ extension GameScene{
         obstacle.position = CGPoint(x: size.width + obstacle.size.width * 1.5,
                                     y: size.height / 2.0)
         obstacle.zPosition = 5.0
-        obstacle.setScale(0.3)
+        obstacle.setScale(0.25)
         
-        let sizePhysics = CGSize(width: obstacle.size.width / 2.0, height: obstacle.size.height)
+        let sizePhysics = CGSize(width: obstacle.size.width / 2.0, height: obstacle.size.height/1.5)
         obstacle.physicsBody = SKPhysicsBody(rectangleOf: sizePhysics)
         obstacle.physicsBody?.affectedByGravity = true
         obstacle.physicsBody?.isDynamic = true
