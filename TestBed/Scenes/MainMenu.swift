@@ -242,7 +242,7 @@ extension MainMenu{
        
        setupContainer()
        
-       let panel = SKSpriteNode(color: SKColor.white, size: CGSize(width: 700, height: 200))
+       let panel = SKSpriteNode(color: SKColor.white, size: CGSize(width: 700, height: 350))
        panel.setScale(1.5)
        panel.position = .zero
        panel.zPosition = 20.0
@@ -252,16 +252,16 @@ extension MainMenu{
        let resume = SKSpriteNode(imageNamed: effect)
        resume.name = "effect"
        resume.zPosition = 70.0
-       resume.setScale(0.7)
-       resume.position = CGPoint(x: -panel.frame.width/2.0 + resume.frame.width * 2.5, y: 0.0)
+       resume.setScale(0.5)
+       resume.position = CGPoint(x: -panel.frame.width/2.0 + resume.frame.width * 3.0, y: 0.0)
        panel.addChild(resume)
        
        let music = audioManager.checkMuteMusic() ? "musicOn" : "musicOff"
        let quit = SKSpriteNode(imageNamed: music)
        quit.name = "music"
        quit.zPosition = 70.0
-       quit.setScale(0.7)
-       quit.position = CGPoint(x: panel.frame.width/2.0 - quit.frame.width * 2.5, y: 0.0)
+       quit.setScale(0.5)
+       quit.position = CGPoint(x: panel.frame.width/2.0 - quit.frame.width * 3.0, y: 0.0)
        panel.addChild(quit)
   
    }

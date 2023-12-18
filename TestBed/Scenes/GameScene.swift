@@ -40,6 +40,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var obstacleTypes:[String] = ["block-1","block-2","block-3"]
     var paper:SKSpriteNode!
     var obstacle:SKSpriteNode!
+    var mac:SKSpriteNode!
     
     //Stats
     var velocity:CGFloat = 7.0//Change this value to modify the movement speed
@@ -47,8 +48,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var gameOver:Bool = false
     var onGround:Bool = true
     var started = false
-    
- 
     
     //Pause Element
     var gamePaused = false
@@ -64,6 +63,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var difficultyTimer:Timer?
     var obstacleSpawnTimer: Timer?
     var paperSpawntimer: Timer?
+    var macSpawnTimer: Timer?
 
     
     //Variables to handle the jump
@@ -98,6 +98,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.startObstacleSpawnTimer()
             self.startPaperSpawnTimer()
             self.updateDifficulty()
+            self.spawnMac()
             self.started = true
         }
     }
@@ -156,12 +157,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             (bodyA.categoryBitMask == PhysicsCategory.Ground && bodyB.categoryBitMask == PhysicsCategory.Player) {
             onGround = true
         }
-        if (bodyA.categoryBitMask == PhysicsCategory.Player && bodyB.categoryBitMask == PhysicsCategory.Obstacle) ||
-            (bodyA.categoryBitMask == PhysicsCategory.Obstacle && bodyB.categoryBitMask == PhysicsCategory.Player) {
-            if !gameOver{
-                setupGameOver()
-            }
-        }
         
         if (bodyA.categoryBitMask == PhysicsCategory.Player && bodyB.categoryBitMask == PhysicsCategory.Paper){
             addPoints()
@@ -180,16 +175,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         if (bodyA.categoryBitMask == PhysicsCategory.Player && bodyB.categoryBitMask == PhysicsCategory.Obstacle){
             contact.bodyB.node?.removeFromParent()
+            if !gameOver{
+                setupGameOver()
+            }
         }else if (bodyA.categoryBitMask == PhysicsCategory.Obstacle && bodyB.categoryBitMask == PhysicsCategory.Player) {
             contact.bodyA.node?.removeFromParent()
-            
+            if !gameOver{
+                setupGameOver()
+            }
         }
     }
     
     //reset timer when scen has been dealloccated
     deinit {
-        // Assicurati di fermare il timer quando la scena viene deallocata
         timer?.invalidate()
+        difficultyTimer?.invalidate()
+        paperSpawntimer?.invalidate()
+        obstacleSpawnTimer?.invalidate()
+        macSpawnTimer?.invalidate()
     }
 }
 
@@ -268,6 +271,26 @@ extension GameScene{
             
             self.addChild(floor)
         }
+    }
+    @objc func setupMac(){
+        mac = SKSpriteNode(imageNamed: "mac")
+        mac.setScale(0.5)
+        mac.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        mac.position = CGPoint(x: frame.maxX, y: frame.midY + CGFloat.random(in: 150...300))
+        mac.zPosition = 5.0
+        
+        let rotate = SKAction.rotate(byAngle: 45, duration: 8)
+        mac.run(.repeatForever(rotate))
+        
+        mac.physicsBody = SKPhysicsBody(rectangleOf: mac.size)
+        mac.physicsBody?.affectedByGravity = false
+        mac.physicsBody?.categoryBitMask = PhysicsCategory.Obstacle
+        mac.physicsBody?.contactTestBitMask = PhysicsCategory.Player
+        addChild(mac)
+        
+        let moveAction = SKAction.moveTo(x: -mac.size.width, duration: 3)
+        let removeAction = SKAction.removeFromParent()
+        mac.run(SKAction.sequence([moveAction, removeAction]))
     }
     
     func moveGrounds(){
@@ -377,14 +400,14 @@ extension GameScene{
         resume.name = "resume"
         resume.zPosition = 70.0
         resume.setScale(0.7)
-        resume.position = CGPoint(x: -pauseMenu.frame.width/2.0 + resume.frame.width * 1.5, y: 0.0)
+        resume.position = CGPoint(x: -pauseMenu.frame.width/2.0 + resume.frame.width * 1.3, y: 0.0)
         pauseMenu.addChild(resume)
         
         let quit = SKSpriteNode(imageNamed: "back")
         quit.name = "home"
         quit.zPosition = 70.0
-        quit.setScale(0.7)
-        quit.position = CGPoint(x: pauseMenu.frame.width/2.0 - quit.frame.width * 1.5, y: 0.0)
+        quit.setScale(0.61)
+        quit.position = CGPoint(x: pauseMenu.frame.width/2.0 - quit.frame.width * 1.3, y: 0.0)
         pauseMenu.addChild(quit)
     }
     func setupPause(){
@@ -392,8 +415,8 @@ extension GameScene{
         pauseNode.setScale(0.5)
         pauseNode.zPosition = 50.0
         pauseNode.name = "pause"
-        pauseNode.position = CGPoint(x: frame.maxX - pauseNode.frame.width * 1.5,
-                                     y: frame.midY + pauseNode.frame.height * 3.5)
+        pauseNode.position = CGPoint(x: frame.maxX - pauseNode.frame.width ,
+                                     y: frame.maxY - pauseNode.frame.height * 3.0)
         self.addChild(pauseNode)
     }
     func setupScore(){
@@ -454,8 +477,7 @@ extension GameScene{
     //Handle the game over sequence
     func setupGameOver(){
         gameOver = true
-        paper.removeFromParent()
-        obstacle.removeFromParent()
+
       
         obstacleSpawnTimer?.isValid ?? false ? obstacleSpawnTimer?.invalidate() : startObstacleSpawnTimer()
         paperSpawntimer?.isValid ?? false ? paperSpawntimer?.invalidate() : startPaperSpawnTimer()
@@ -521,26 +543,26 @@ extension GameScene{
     //MARK: - Timers
     //Gestiamo gli ostacoli
     func startObstacleSpawnTimer() {
-        print("started")
         obstacleSpawnTimer = Timer.scheduledTimer(timeInterval: difficulty, target: self,
                                                   selector: #selector(spawnObstacle), userInfo: nil, repeats: true)
     }
     //Timer to make epaper Spawn
     func startPaperSpawnTimer(){
-        print("started")
         paperSpawntimer = Timer.scheduledTimer(timeInterval: TimeInterval.random(in: 10...15), target: self,
                                                   selector: #selector(setupPaper), userInfo: nil, repeats: true)
     }
     //Regular Timer
     func startTimer(){
-        print("started")
         timer = Timer.scheduledTimer(timeInterval: timerUpdate, target: self,
                                      selector: #selector(addPoints), userInfo: nil, repeats: true)
     }
     //Timer to increase difficulty
     func updateDifficulty(){
-        print("started")
         difficultyTimer = Timer.scheduledTimer(timeInterval: timerUpdate, target: self,
                                      selector: #selector(increaseVelocity), userInfo: nil, repeats: true)
+    }
+    func spawnMac(){
+        macSpawnTimer = Timer.scheduledTimer(timeInterval: 10, target: self,
+                                     selector: #selector(setupMac), userInfo: nil, repeats: true)
     }
 }
