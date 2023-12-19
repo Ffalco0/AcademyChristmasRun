@@ -68,7 +68,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     //Variables to handle the jump
     var vel:CGFloat = 0.0
-    var gravity:CGFloat = 0.6
+    var gravity:CGFloat = 0.65
     var playerPosY:CGFloat = 0.0
     
     //Sounds
@@ -84,8 +84,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         physicsWorld.contactDelegate = self
         setUpNodes()
         //Set up variables
-        difficulty = 3.0
-        velocity = 7.0
+        difficulty = 2.7
+        velocity = 9.0
         numScore = 0
         
         audioManager.playBackgroundMusic()
@@ -107,6 +107,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if !gameOver && started{
             moveGrounds()
             moveBg()
+            
             vel += gravity
             player.position.y -= vel
             if player.position.y < playerPosY{
@@ -276,7 +277,9 @@ extension GameScene{
         mac = SKSpriteNode(imageNamed: "mac")
         mac.setScale(0.5)
         mac.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        mac.position = CGPoint(x: frame.maxX, y: frame.midY + CGFloat.random(in: 280...300))
+       // mac.position = CGPoint(x: frame.maxX, y: frame.midY + CGFloat.random(in: 280...300))
+        mac.position = CGPoint(x: frame.maxX,
+                               y: frame.midY )
         mac.zPosition = 5.0
         
         let rotate = SKAction.rotate(byAngle: 45, duration: 8)
@@ -286,23 +289,29 @@ extension GameScene{
         mac.physicsBody?.affectedByGravity = false
         mac.physicsBody?.categoryBitMask = PhysicsCategory.Obstacle
         mac.physicsBody?.contactTestBitMask = PhysicsCategory.Player
-        addChild(mac)
         
-        let moveAction = SKAction.moveTo(x: -mac.size.width, duration: 3)
-        let removeAction = SKAction.removeFromParent()
-        mac.run(SKAction.sequence([moveAction, removeAction]))
+        if !gameOver && !gamePaused{
+            addChild(mac)
+            
+            let moveAction = SKAction.moveTo(x: -mac.size.width, duration: 3)
+            let removeAction = SKAction.removeFromParent()
+            mac.run(SKAction.sequence([moveAction, removeAction]))
+        }
     }
     
     func moveGrounds(){
-        self.enumerateChildNodes(withName: "floor", using: ({
-            (node,error) in
-            
-            node.position.x -= self.velocity
-            
-            if node.position.x < -(self.scene?.size.width)!{
-                node.position.x += (self.scene?.size.width)! * 3
+        enumerateChildNodes(withName: "floor") { (node, _) in
+            if let floorNode = node as? SKSpriteNode {
+                // Sposta gli sfondi lateralmente
+                floorNode.position.x -= self.velocity
+                
+                // Verifica se uno degli sfondi è fuori dalla scena
+                if floorNode.position.x < -floorNode.size.width {
+                    // Riporta lo sfondo alla posizione iniziale dell'altro sfondo
+                    floorNode.position.x += floorNode.size.width * 2.0
+                }
             }
-        }))
+        }
     }
     
     
@@ -335,7 +344,7 @@ extension GameScene{
         player.position = CGPoint(x: frame.minX - player.size.width,
                                   y: frame.midY - 200.0)
         player.zPosition = 5.0
-        player.physicsBody = SKPhysicsBody(circleOfRadius: self.player.size.width/3.5)
+        player.physicsBody = SKPhysicsBody(circleOfRadius: self.player.size.width/4.0)
         player.physicsBody!.affectedByGravity = false
         player.physicsBody!.restitution = 0.0
         
@@ -366,24 +375,34 @@ extension GameScene{
     @objc func spawnObstacle() {
         guard let randomObstacleType = obstacleTypes.randomElement() else { return }
         
+        // Aggiorna la variabile difficulty qui, ad esempio in base a punteggi, tempo, ecc.
+        let dynamicDifficulty = difficulty
+        
+        // Aggiorna il timeInterval del timer con il nuovo valore di difficulty
+        difficulty = dynamicDifficulty
+        
         obstacle = SKSpriteNode(imageNamed: randomObstacleType)
         obstacle.position = CGPoint(x: size.width + obstacle.size.width * 1.5,
-                                    y: size.height / 2.0)
+                                    y: floor.size.height + 150.0)
         obstacle.zPosition = 5.0
         obstacle.setScale(0.25)
         
         let sizePhysics = CGSize(width: obstacle.size.width / 2.0, height: obstacle.size.height/1.5)
         obstacle.physicsBody = SKPhysicsBody(rectangleOf: sizePhysics)
-        obstacle.physicsBody?.affectedByGravity = true
+        obstacle.physicsBody?.affectedByGravity = false
         obstacle.physicsBody?.isDynamic = true
         obstacle.physicsBody?.allowsRotation = false
         obstacle.physicsBody?.categoryBitMask = PhysicsCategory.Obstacle
         obstacle.physicsBody?.contactTestBitMask = PhysicsCategory.Player
-        addChild(obstacle)
         
-        let moveAction = SKAction.moveTo(x: -obstacle.size.width, duration: 5)
-        let removeAction = SKAction.removeFromParent()
-        obstacle.run(SKAction.sequence([moveAction, removeAction]))
+        if !gameOver && !gamePaused{
+            addChild(obstacle)
+            
+            let moveAction = SKAction.moveTo(x: -obstacle.size.width, duration: 5)
+            let removeAction = SKAction.removeFromParent()
+            obstacle.run(SKAction.sequence([moveAction, removeAction]))
+        }
+        startObstacleSpawnTimer()
     }
     
     
@@ -462,25 +481,28 @@ extension GameScene{
         
         // Metti in pausa o riprendi la scena e i timer
         self.isPaused = gamePaused
-        obstacleSpawnTimer?.isValid ?? false ? obstacleSpawnTimer?.invalidate() : startObstacleSpawnTimer()
-        paperSpawntimer?.isValid ?? false ? paperSpawntimer?.invalidate() : startPaperSpawnTimer()
-        macSpawnTimer?.isValid ?? false ? macSpawnTimer?.invalidate() : spawnMac()
+        //Old pause for timer 
+        // obstacleSpawnTimer?.isValid ?? false ? obstacleSpawnTimer?.invalidate() : startObstacleSpawnTimer()
+        //paperSpawntimer?.isValid ?? false ? paperSpawntimer?.invalidate() : startPaperSpawnTimer()
+        //macSpawnTimer?.isValid ?? false ? macSpawnTimer?.invalidate() : spawnMac()
         
         pauseMenu?.isHidden = !gamePaused
     }
+    
     //Used by timer to increase difficulty every 200 points
     @objc func increaseVelocity(){
         if((numScore % 200) == 0) && numScore > 0 {
-            if (difficulty > 0.5){
-                difficulty -= 1.0
-                velocity += 0.5
+            if (difficulty > 1.7) && (velocity <= 13){
+                difficulty -= 0.4
+                velocity += 1.0
             }
         }
     }
+    
     //Handle the function to count points
     func paperPoints(){
         if !gameOver {
-            numScore += 20
+            numScore += 50
             scoreLabel.text = "\(numScore)"
         }
     }
@@ -549,9 +571,10 @@ extension GameScene{
         paper.physicsBody?.categoryBitMask = PhysicsCategory.Paper
         paper.physicsBody?.contactTestBitMask = PhysicsCategory.Player
         
-        self.addChild(paper)
-        
-        if !gameOver{
+        if !gameOver && !gamePaused{
+            self.addChild(paper)
+            
+            
             let moveAction = SKAction.moveTo(x: -paper.size.width, duration: 6)
             let removeAction = SKAction.removeFromParent()
             paper.run(SKAction.sequence([moveAction, removeAction]))
@@ -560,6 +583,7 @@ extension GameScene{
     //MARK: - Timers
     //Gestiamo gli ostacoli
     func startObstacleSpawnTimer() {
+        obstacleSpawnTimer?.invalidate()
         obstacleSpawnTimer = Timer.scheduledTimer(timeInterval: difficulty, target: self,
                                                   selector: #selector(spawnObstacle), userInfo: nil, repeats: true)
     }
