@@ -481,7 +481,7 @@ extension GameScene{
         
         // Metti in pausa o riprendi la scena e i timer
         self.isPaused = gamePaused
-        //Old pause for timer 
+        //Old pause for timer
         // obstacleSpawnTimer?.isValid ?? false ? obstacleSpawnTimer?.invalidate() : startObstacleSpawnTimer()
         //paperSpawntimer?.isValid ?? false ? paperSpawntimer?.invalidate() : startPaperSpawnTimer()
         //macSpawnTimer?.isValid ?? false ? macSpawnTimer?.invalidate() : spawnMac()
